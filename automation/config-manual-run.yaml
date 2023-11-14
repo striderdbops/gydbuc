@@ -1,0 +1,45 @@
+SqlCloneServer: # RG SQL Clone config
+  ServerUrl: http://clone-server:14145
+  Username: 
+  Password: 
+NamedInstanclias: 
+  - Name: pkruis
+    Alias: peterkruis
+  - Name: thuizer
+    Alias: "tonie.huizer_promicro.nl#EXT#"
+SqlServerInstance: # Used from cloning and migration databases.
+  MachineName: clone-server
+  Username:
+  Password: 
+  FirstDeleteClone: True
+  NamedInstances:
+    - Name: default
+      Port: 4461
+    - Name: thuizer
+      Port: 4463
+    - Name: pkruis
+      Port: 4465
+Databases:
+    # - Adressen
+    # - Erp
+    # - Framework
+    # - Bartender
+    # - Cbe
+    # - Labels
+    # - Logging
+    # - Slacht
+    # - Stock
+    # - Financieel
+    # - IR
+    # - Orders
+    # - Paspoortscan
+    # - Production
+    # - Slachthuis
+    # - Standaards
+    # - VleesCalculatieSysteem
+    # - wms
+    # - D365_MESMOM
+#
+
+DriftReportPath: C:\Data\Test\DriftReports
+SnapShotReportPath: C:\Data\Test\Snapshots

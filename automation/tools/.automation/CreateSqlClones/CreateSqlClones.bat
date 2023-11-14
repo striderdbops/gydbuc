@@ -1,0 +1,12 @@
+@echo off
+set "configFile=config-manual-run"
+set /p configFile="Enter SQL Server source (config filename) or press enter to the default when running manual (%configFile%) "
+set "sqlServerInstanceName=%username%"
+set /p sqlServerInstanceName="Enter SQL Server instance name or press enter to use instance name %username% "
+set /p imageNamePrefix="The prefix for the image name of the clone, or leave blank [ENTER] "
+echo Access the path of the batch file.
+pushd %~dp0
+echo Run script CreateSqlClones.ps1.
+IF DEFINED imageNamePrefix (pwsh -NoProfile -ExecutionPolicy Bypass -File ./CreateSqlClones.ps1 -configFile %configFile%.yaml -sqlServerInstanceName %sqlServerInstanceName%  -imageNamePrefix %imageNamePrefix%) ELSE (    pwsh -NoProfile -ExecutionPolicy Bypass -File ./CreateSqlClones.ps1 -configFile %configFile%.yaml -sqlServerInstanceName %sqlServerInstanceName%)
+popd
+pause

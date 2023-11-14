@@ -1,0 +1,43 @@
+name: $(Year:yy).$(Month).$(Rev:r).$(BranchName)
+
+variables:
+  ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/') }}:
+    Ref: $[ replace(replace(replace(variables['Build.SourceBranch'], 'refs/heads/release/', ''), 'refs/heads/', ''), '/', '-') ]
+  ${{ if startsWith(variables['Build.SourceBranch'], 'refs/pull/') }}:
+    Ref: $[ replace(replace(variables['System.PullRequest.SourceBranch'], 'refs/heads/', ''), '/', '-') ]
+  BranchName: $[ variables['Ref'] ]
+  System.Debug: false
+
+trigger:
+  branches:
+    include:
+    - 'master'
+    - 'release/*'
+    - 'topic/*'
+    - 'hotfix/*'
+
+pool:
+  name: AgentPool
+
+steps: 
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(agent.builddirectory)\s\DBS'
+    Contents: |
+      **\migrations\**
+      **\flyway.conf**
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    CleanTargetFolder: true
+    OverWrite: true
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(agent.builddirectory)\s\tools'
+    Contents: |
+      **\.automation\**
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    OverWrite: true
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: $(Build.BuildNumber)'
+  inputs:
+    ArtifactName: '$(Build.BuildNumber)'

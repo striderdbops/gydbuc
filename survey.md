@@ -1,10 +1,10 @@
 # Version Control and Git Knowledge Survey
 
-Welcome to the pre-con session on Git Your Database Under Control! Please fill out this survey to help us understand your background and expectations. Once you're done, commit your changes and create a pull request to submit your responses.
+Welcome to the pre-con session on Git Your Database Under Control! Please fill out this survey to help us understand your background and expectations. Once you're done, commit your changes and create a pull request to submit your responses..
 
 ## Personal Information (Optional)
 - **Name**: 
-- **What do you do with databases**: 
+- **What do you do in your work**: 
 - **Experience with Version Control**: 
 
 ## Pre-Session Knowledge

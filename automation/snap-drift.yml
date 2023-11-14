@@ -1,0 +1,56 @@
+variables:
+  driftedVersionedDatabases: 0
+  System.Debug: false
+  buildDate: $[format('{0:yyyyMMddHHmmss}', pipeline.startTime)]
+
+schedules:
+- cron: "0 1 * * *"
+  displayName: Scheduled Snap & Drift, runs at 01:00 at UTC time every day.
+  branches:
+   include:
+     - master
+  always: true 
+
+pool:
+  name: AgentPool
+
+parameters:
+  - name: snapOnly
+    displayName: Snap only parameter. Set this to $True in case you want to create a snapshot, but don't want to create a work item to solve database drift. Default is $False
+    type: string
+    default: '$False'
+
+stages:
+- stage: SnapAndDrift
+  jobs:
+  - job: CreateReports
+
+    steps:
+    - task: PowerShell@2
+      displayName: 'Snap and Drift control'
+      inputs:
+        filePath: '$(agent.builddirectory)\s\tools\.automation\SnapAndDrift\SnapAndDrift.ps1'
+        arguments: '-configFile PRODDB.yaml -sqlServerInstanceName default -snapOnly ${{parameters.snapOnly}}'
+        pwsh: true
+
+- stage: FollowUp
+  condition: eq(dependencies.SnapAndDrift.result, 'SucceededWithIssues')
+  jobs:
+  - job: CreateWorkItem
+    displayName: Create a work item to solve the drift
+    steps:
+    - task: CreateWorkItem@1
+      inputs:
+        workItemType: 'Bug'
+        title: 'One or more  databases are drifted - $(buildDate)'
+        iterationPath: 'eam@currentIteration'
+        fieldMappings: |
+         Repro Steps='One or more databases are drifted. Please review the drift report(s), the reports are attached in the linked build as artifact.'
+         Remaining Work=0.5
+         Tags=mms13091; SQL; DBDrifted
+        associate: true
+        linkWorkItems: true
+        linkType: 'System.LinkTypes.Hierarchy-Reverse'
+        linkTarget: 'id'
+        targetId: 117965
+        assignedTo: 'Niels Timmers <tonie.huizer@promicro.nl'
